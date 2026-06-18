@@ -3,12 +3,18 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
+// Embed the auth token in the URL so `prisma migrate deploy` can reach Turso.
+// For local file:// URLs the token is absent and the param is simply omitted.
+const rawUrl = process.env["DATABASE_URL"] ?? "file:./dev.db";
+const authToken = process.env["DATABASE_AUTH_TOKEN"];
+const datasourceUrl = authToken ? `${rawUrl}?authToken=${authToken}` : rawUrl;
+
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    url: datasourceUrl,
   },
 });

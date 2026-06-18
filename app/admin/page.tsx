@@ -73,7 +73,7 @@ export default async function AdminDashboardPage() {
 
       {/* Listings table */}
       <div className="rounded-2xl bg-white ring-1 ring-jb-border shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-jb-border flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-4 border-b border-jb-border flex items-center justify-between">
           <h2 className="font-semibold text-jb-text">All Listings</h2>
           <span className="text-sm text-jb-text-muted">{allListings.length} total</span>
         </div>
@@ -82,11 +82,11 @@ export default async function AdminDashboardPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-jb-border bg-slate-50">
-                <th className="px-6 py-3 text-left font-medium text-jb-text-muted">Role</th>
-                <th className="px-6 py-3 text-left font-medium text-jb-text-muted hidden md:table-cell">Type</th>
-                <th className="px-6 py-3 text-left font-medium text-jb-text-muted hidden lg:table-cell">Posted</th>
-                <th className="px-6 py-3 text-left font-medium text-jb-text-muted">Status</th>
-                <th className="px-6 py-3 text-right font-medium text-jb-text-muted">Actions</th>
+                <th className="px-4 sm:px-6 py-3 text-left font-medium text-jb-text-muted">Role</th>
+                <th className="px-4 sm:px-6 py-3 text-left font-medium text-jb-text-muted hidden md:table-cell">Type</th>
+                <th className="px-4 sm:px-6 py-3 text-left font-medium text-jb-text-muted hidden lg:table-cell">Posted</th>
+                <th className="px-4 sm:px-6 py-3 text-left font-medium text-jb-text-muted">Status</th>
+                <th className="px-4 sm:px-6 py-3 text-right font-medium text-jb-text-muted">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-jb-border">
@@ -97,17 +97,17 @@ export default async function AdminDashboardPage() {
 
                 return (
                   <tr key={listing.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4">
+                    <td className="px-4 sm:px-6 py-4">
                       <p className="font-medium text-jb-text">{listing.title}</p>
                       <p className="text-xs text-jb-text-muted mt-0.5">{listing.company}</p>
                     </td>
-                    <td className="px-6 py-4 hidden md:table-cell">
+                    <td className="px-4 sm:px-6 py-4 hidden md:table-cell">
                       <Badge jobType={listing.type as JobType} />
                     </td>
-                    <td className="px-6 py-4 text-jb-text-muted hidden lg:table-cell">
+                    <td className="px-4 sm:px-6 py-4 text-jb-text-muted hidden lg:table-cell">
                       {formatDate(listing.postDate)}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 sm:px-6 py-4">
                       {expired ? (
                         <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-500">
                           Archived
@@ -122,7 +122,7 @@ export default async function AdminDashboardPage() {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-4 sm:px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Link href={`/admin/jobs/${listing.id}/edit`}>
                           <button

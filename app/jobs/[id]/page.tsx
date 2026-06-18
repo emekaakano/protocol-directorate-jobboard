@@ -38,7 +38,7 @@ export default async function JobDetailPage({ params }: Props) {
         Back to listings
       </Link>
 
-      <div className="rounded-2xl bg-white p-8 ring-1 ring-jb-border shadow-sm">
+      <div className="rounded-2xl bg-white p-5 sm:p-8 ring-1 ring-jb-border shadow-sm">
         {/* Header */}
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>

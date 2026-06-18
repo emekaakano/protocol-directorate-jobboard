@@ -58,7 +58,7 @@ export function JobForm({
 
       <h1 className="mb-8 text-3xl font-black text-jb-text">{heading}</h1>
 
-      <div className="rounded-2xl bg-white p-8 ring-1 ring-jb-border shadow-sm">
+      <div className="rounded-2xl bg-white p-5 sm:p-8 ring-1 ring-jb-border shadow-sm">
         <form action={formAction} className="flex flex-col gap-6">
           {state?.message && (
             <div className="rounded-lg bg-jb-danger-light px-4 py-3 text-sm text-jb-danger">

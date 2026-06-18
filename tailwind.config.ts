@@ -9,6 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        "jara-green": "#78C440",
         jb: {
           primary: "#2563EB",
           "primary-dark": "#1D4ED8",
