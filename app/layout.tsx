@@ -14,9 +14,10 @@ const geistMono = localFont({
 });
 
 import { Navbar } from "@/components/layout/Navbar";
+import { SessionProvider } from "@/components/providers/SessionProvider";
 
 export const metadata: Metadata = {
-  title: "JobBoard — Find Your Next Opportunity",
+  title: "Protocol Directorate JobBoard — Find Your Next Opportunity",
   description:
     "Browse verified job listings. Fresh opportunities updated daily, auto-archived after 30 days.",
 };
@@ -31,8 +32,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-jb-muted text-jb-text`}
       >
-        <Navbar />
-        <main>{children}</main>
+        <SessionProvider>
+          <Navbar />
+          <main>{children}</main>
+        </SessionProvider>
       </body>
     </html>
   );

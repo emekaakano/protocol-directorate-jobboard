@@ -1,12 +1,17 @@
 import Link from "next/link";
-import { PlusCircle, Pencil, Trash2, AlertTriangle } from "lucide-react";
+import { PlusCircle, Pencil, Trash2 } from "lucide-react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { SignOutButton } from "@/components/admin/SignOutButton";
 import { formatDate, daysUntilExpiry, isExpired } from "@/lib/utils";
 import type { JobType } from "@/lib/types";
 
 export default async function AdminDashboardPage() {
+  const session = await getServerSession(authOptions);
+
   const allListings = await prisma.jobListing.findMany({
     where: { deletedAt: null },
     orderBy: { postDate: "desc" },
@@ -33,27 +38,23 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      {/* Demo banner */}
-      <div className="mb-6 flex items-center gap-3 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
-        <AlertTriangle size={16} className="shrink-0" />
-        <span>
-          <strong>Demo mode</strong> — this page is publicly visible. Authentication
-          and route protection coming in Phase 2.
-        </span>
-      </div>
-
       {/* Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap mb-8">
         <div>
           <h1 className="text-3xl font-black text-jb-text">Admin Dashboard</h1>
-          <p className="mt-1 text-jb-text-muted">Manage job listings</p>
+          <p className="mt-1 text-jb-text-muted">
+            Signed in as <span className="font-medium text-jb-text">{session?.user?.name}</span>
+          </p>
         </div>
-        <Link href="/admin/jobs/new">
-          <Button>
-            <PlusCircle size={16} />
-            Post New Job
-          </Button>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link href="/admin/jobs/new">
+            <Button>
+              <PlusCircle size={16} />
+              Post New Job
+            </Button>
+          </Link>
+          <SignOutButton />
+        </div>
       </div>
 
       {/* Stats */}
