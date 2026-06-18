@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { PlusCircle, Pencil, Trash2 } from "lucide-react";
+import { PlusCircle, Pencil } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { SignOutButton } from "@/components/admin/SignOutButton";
+import { DeleteListingButton } from "@/components/admin/DeleteListingButton";
 import { formatDate, daysUntilExpiry, isExpired } from "@/lib/utils";
 import type { JobType } from "@/lib/types";
 
@@ -124,13 +125,14 @@ export default async function AdminDashboardPage() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Link href={`/admin/jobs/${listing.id}/edit`}>
-                          <button className="flex h-8 w-8 items-center justify-center rounded-lg text-jb-text-muted hover:bg-jb-primary-light hover:text-jb-primary transition-colors">
+                          <button
+                            title="Edit listing"
+                            className="flex h-8 w-8 items-center justify-center rounded-lg text-jb-text-muted transition-colors hover:bg-jb-primary-light hover:text-jb-primary"
+                          >
                             <Pencil size={14} />
                           </button>
                         </Link>
-                        <button className="flex h-8 w-8 items-center justify-center rounded-lg text-jb-text-muted hover:bg-jb-danger-light hover:text-jb-danger transition-colors">
-                          <Trash2 size={14} />
-                        </button>
+                        <DeleteListingButton id={listing.id} title={listing.title} />
                       </div>
                     </td>
                   </tr>
