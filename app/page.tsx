@@ -1,21 +1,30 @@
-import { Briefcase } from "lucide-react";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { prisma } from "@/lib/prisma";
+import { JobListings } from "@/components/jobs/JobListings";
 
-export default function HomePage() {
-  return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-black text-jb-text">Job Listings</h1>
-        <p className="mt-1 text-jb-text-muted">
-          Browse open positions — auto-archived after 30 days.
-        </p>
-      </div>
+export default async function HomePage() {
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-      <EmptyState
-        icon={Briefcase}
-        title="No listings yet"
-        description="Check back soon — new positions are added regularly."
-      />
-    </div>
-  );
+  const listings = await prisma.jobListing.findMany({
+    where: { deletedAt: null, postDate: { gte: thirtyDaysAgo } },
+    orderBy: { postDate: "desc" },
+    select: {
+      id: true,
+      title: true,
+      company: true,
+      location: true,
+      type: true,
+      description: true,
+      salaryMin: true,
+      salaryMax: true,
+      postDate: true,
+    },
+  });
+
+  const serialized = listings.map((l) => ({
+    ...l,
+    postDate: l.postDate.toISOString(),
+  }));
+
+  return <JobListings listings={serialized} />;
 }
