@@ -5,9 +5,6 @@
  * Usage:  npm run manage-admin
  */
 
-import { config } from "dotenv";
-config({ path: ".env" });
-
 import * as readline from "readline";
 import bcrypt from "bcryptjs";
 import { createClient } from "@libsql/client";
