@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { SignOutButton } from "@/components/admin/SignOutButton";
 import { DeleteListingButton } from "@/components/admin/DeleteListingButton";
+import { ExportReport } from "@/components/admin/ExportReport";
 import { formatDate, daysUntilExpiry, isExpired } from "@/lib/utils";
 import type { JobType } from "@/lib/types";
 
@@ -69,6 +70,11 @@ export default async function AdminDashboardPage() {
             <p className="mt-1 text-xs text-jb-text-muted">{s.label}</p>
           </div>
         ))}
+      </div>
+
+      {/* Export Report */}
+      <div className="mb-8">
+        <ExportReport />
       </div>
 
       {/* Listings table */}

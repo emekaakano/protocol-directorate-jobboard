@@ -19,7 +19,6 @@ interface DefaultValues {
   requirements?: string;
   salaryMin?: number | null;
   salaryMax?: number | null;
-  contactEmail?: string;
   applicationDeadline?: string;
   howToApply?: string;
 }
@@ -147,16 +146,6 @@ export function JobForm({
               placeholder="e.g. 700000"
             />
           </div>
-
-          <Input
-            label="Contact Email"
-            name="contactEmail"
-            type="email"
-            defaultValue={defaultValues.contactEmail}
-            error={state?.errors?.contactEmail?.[0]}
-            placeholder="careers@company.com"
-            required
-          />
 
           {/* Application deadline date picker */}
           <div className="flex flex-col gap-1.5">

@@ -23,7 +23,6 @@ function parseFormData(formData: FormData) {
     requirements: formData.get("requirements") as string,
     salaryMin: salaryMinRaw === "" ? null : salaryMinRaw,
     salaryMax: salaryMaxRaw === "" ? null : salaryMaxRaw,
-    contactEmail: formData.get("contactEmail") as string,
     applicationDeadline: formData.get("applicationDeadline") as string,
     howToApply: formData.get("howToApply") as string,
   };
@@ -41,10 +40,13 @@ export async function createListing(
     return { errors: parsed.error.flatten().fieldErrors as Record<string, string[]> };
   }
 
-  const { applicationDeadline, ...rest } = parsed.data;
+  const { applicationDeadline, howToApply, ...rest } = parsed.data;
+  const isEmail = (v: string) => !v.startsWith("http") && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
   const listing = await prisma.jobListing.create({
     data: {
       ...rest,
+      howToApply,
+      contactEmail: isEmail(howToApply) ? howToApply : "",
       applicationDeadline: applicationDeadline ? new Date(applicationDeadline) : null,
       adminId: session.user.id,
     },
@@ -75,11 +77,14 @@ export async function updateListing(
     return { errors: parsed.error.flatten().fieldErrors as Record<string, string[]> };
   }
 
-  const { applicationDeadline, ...rest } = parsed.data;
+  const { applicationDeadline, howToApply, ...rest } = parsed.data;
+  const isEmail = (v: string) => !v.startsWith("http") && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
   const listing = await prisma.jobListing.update({
     where: { id, deletedAt: null },
     data: {
       ...rest,
+      howToApply,
+      contactEmail: isEmail(howToApply) ? howToApply : "",
       applicationDeadline: applicationDeadline ? new Date(applicationDeadline) : null,
     },
   });

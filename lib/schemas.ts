@@ -26,7 +26,6 @@ export const jobListingSchema = z.object({
     .min(20, "Requirements must be at least 20 characters"),
   salaryMin: z.coerce.number().int().positive().nullable().optional(),
   salaryMax: z.coerce.number().int().positive().nullable().optional(),
-  contactEmail: z.string().email("Invalid contact email"),
   applicationDeadline: z.string()
     .min(1, "Application deadline is required")
     .refine((s) => !isNaN(new Date(s).getTime()), "Please enter a valid date"),
