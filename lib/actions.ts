@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -60,6 +61,8 @@ export async function createListing(
     },
   });
 
+  revalidatePath("/");
+  revalidatePath("/admin");
   redirect("/admin");
 }
 
@@ -97,6 +100,9 @@ export async function updateListing(
     },
   });
 
+  revalidatePath("/");
+  revalidatePath("/admin");
+  revalidatePath(`/jobs/${id}`);
   redirect("/admin");
 }
 
@@ -116,4 +122,7 @@ export async function deleteListing(id: string): Promise<void> {
       details: `Deleted: "${listing.title}" at ${listing.company}`,
     },
   });
+
+  revalidatePath("/");
+  revalidatePath("/admin");
 }
