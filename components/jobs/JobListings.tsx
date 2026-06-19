@@ -10,12 +10,17 @@ import { daysUntilExpiry } from "@/lib/utils";
 import type { JobType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const ALL_TYPES = [
-  { value: "", label: "All" },
-  ...Object.entries(JOB_TYPE_LABELS).map(([value, label]) => ({ value, label })),
+type ActiveFilter = JobType | "recent" | "expiring" | "";
+
+const TYPE_PILLS = [
+  { value: "" as const, label: "All" },
+  ...Object.entries(JOB_TYPE_LABELS).map(([value, label]) => ({ value: value as JobType, label })),
 ];
 
-type QuickFilter = "recent" | "expiring" | "";
+const QUICK_PILLS: { value: "recent" | "expiring"; label: string }[] = [
+  { value: "recent", label: "Recent Jobs" },
+  { value: "expiring", label: "About to Expire" },
+];
 
 interface JobListingsProps {
   listings: ListingCardData[];
@@ -23,8 +28,11 @@ interface JobListingsProps {
 
 export function JobListings({ listings }: JobListingsProps) {
   const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState<JobType | "">("");
-  const [quickFilter, setQuickFilter] = useState<QuickFilter>("");
+  const [activeFilter, setActiveFilter] = useState<ActiveFilter>("");
+
+  function toggleFilter(value: ActiveFilter) {
+    setActiveFilter((prev) => (prev === value ? "" : value));
+  }
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
@@ -35,24 +43,32 @@ export function JobListings({ listings }: JobListingsProps) {
         l.title.toLowerCase().includes(q) ||
         l.company.toLowerCase().includes(q) ||
         l.location.toLowerCase().includes(q);
-      const matchesType = !typeFilter || l.type === typeFilter;
       const daysSincePosted = Math.floor((now - new Date(l.postDate).getTime()) / 86400000);
-      const matchesQuick =
-        quickFilter === "recent" ? daysSincePosted <= 7 :
-        quickFilter === "expiring" ? daysUntilExpiry(l.postDate) <= 7 :
-        true;
-      return matchesSearch && matchesType && matchesQuick;
+      const matchesFilter =
+        !activeFilter ? true :
+        activeFilter === "recent" ? daysSincePosted <= 7 :
+        activeFilter === "expiring" ? daysUntilExpiry(l.postDate) <= 7 :
+        l.type === activeFilter;
+      return matchesSearch && matchesFilter;
     });
-  }, [listings, search, typeFilter, quickFilter]);
+  }, [listings, search, activeFilter]);
+
+  function pillStyle(value: ActiveFilter) {
+    const isActive = activeFilter === value;
+    if (!isActive) {
+      return "bg-white border border-jb-border text-jb-text-muted hover:border-jb-primary hover:text-jb-primary";
+    }
+    if (value === "expiring") return "bg-jb-danger text-white border border-jb-danger";
+    if (value === "recent") return "bg-jb-success text-white border border-jb-success";
+    return "bg-jb-primary text-white border border-jb-primary";
+  }
 
   return (
     <div>
       {/* Hero */}
       <div className="bg-white border-b border-jb-border">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-black text-jb-text">
-            Find Your Next Role
-          </h1>
+          <h1 className="text-4xl font-black text-jb-text">Find Your Next Role</h1>
           <p className="mt-2 text-jb-text-muted">
             {listings.length} active listing{listings.length !== 1 ? "s" : ""} ·
             auto-archived after 30 days
@@ -84,55 +100,46 @@ export function JobListings({ listings }: JobListingsProps) {
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Quick filters */}
-        <div className="flex flex-wrap gap-2 mb-3">
-          {(["recent", "expiring"] as const).map((key) => {
-            const label = key === "recent" ? "Recent Jobs" : "About to Expire";
-            return (
-              <button
-                key={key}
-                onClick={() => setQuickFilter(quickFilter === key ? "" : key)}
-                className={cn(
-                  "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
-                  quickFilter === key
-                    ? key === "expiring"
-                      ? "bg-jb-danger text-white"
-                      : "bg-jb-success text-white"
-                    : "bg-white border border-jb-border text-jb-text-muted hover:border-jb-primary hover:text-jb-primary"
-                )}
-              >
-                {label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Type filter pills */}
-        <div className="flex flex-wrap gap-2 mb-7">
-          {ALL_TYPES.map((t) => (
+        {/* Single filter row — type pills + quick filters */}
+        <div className="flex flex-wrap items-center gap-2 mb-7">
+          {TYPE_PILLS.map((t) => (
             <button
               key={t.value}
-              onClick={() => setTypeFilter(t.value as JobType | "")}
+              onClick={() => toggleFilter(t.value)}
               className={cn(
                 "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
-                typeFilter === t.value
-                  ? "bg-jb-primary text-white"
-                  : "bg-white border border-jb-border text-jb-text-muted hover:border-jb-primary hover:text-jb-primary"
+                pillStyle(t.value)
               )}
             >
               {t.label}
             </button>
           ))}
+
+          {/* Divider */}
+          <span className="h-5 w-px bg-jb-border mx-1 self-center" aria-hidden />
+
+          {QUICK_PILLS.map((q) => (
+            <button
+              key={q.value}
+              onClick={() => toggleFilter(q.value)}
+              className={cn(
+                "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+                pillStyle(q.value)
+              )}
+            >
+              {q.label}
+            </button>
+          ))}
         </div>
 
         {/* Results count */}
-        {(search || typeFilter || quickFilter) && (
+        {(search || activeFilter) && (
           <p className="mb-4 text-sm text-jb-text-muted">
             {filtered.length} result{filtered.length !== 1 ? "s" : ""}
             {search && (
               <>
-                {" "}
-                for <span className="font-medium text-jb-text">&ldquo;{search}&rdquo;</span>
+                {" "}for{" "}
+                <span className="font-medium text-jb-text">&ldquo;{search}&rdquo;</span>
               </>
             )}
           </p>
@@ -146,11 +153,7 @@ export function JobListings({ listings }: JobListingsProps) {
             description="Try different keywords or clear the filters."
             action={
               <button
-                onClick={() => {
-                  setSearch("");
-                  setTypeFilter("");
-                  setQuickFilter("");
-                }}
+                onClick={() => { setSearch(""); setActiveFilter(""); }}
                 className="text-sm font-medium text-jb-primary hover:underline"
               >
                 Clear filters
