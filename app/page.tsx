@@ -18,12 +18,14 @@ export default async function HomePage() {
       salaryMin: true,
       salaryMax: true,
       postDate: true,
+      applicationDeadline: true,
     },
   });
 
   const serialized = listings.map((l) => ({
     ...l,
     postDate: l.postDate.toISOString(),
+    applicationDeadline: l.applicationDeadline?.toISOString() ?? null,
   }));
 
   return <JobListings listings={serialized} />;

@@ -98,24 +98,56 @@ export default async function JobDetailPage({ params }: Props) {
           </p>
         </div>
 
-        {/* Apply */}
-        <div className="mt-8 rounded-xl bg-jb-primary-light p-5 flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <p className="font-semibold text-jb-text">Interested in this role?</p>
-            <p className="text-sm text-jb-text-muted mt-0.5">
-              Send your CV and cover letter to{" "}
-              <span className="font-medium text-jb-primary">
-                {listing.contactEmail}
+        {/* Application deadline callout */}
+        {listing.applicationDeadline && (
+          <div className="mt-8 flex items-center gap-3 rounded-xl border border-jb-border bg-jb-muted px-5 py-4">
+            <CalendarDays size={18} className="shrink-0 text-jb-text-muted" />
+            <div>
+              <span className="text-sm font-semibold text-jb-text">Application Deadline: </span>
+              <span className="text-sm text-jb-text-muted">
+                {new Date(listing.applicationDeadline).toLocaleDateString("en-GB", {
+                  weekday: "long", day: "numeric", month: "long", year: "numeric",
+                })}
               </span>
-            </p>
+            </div>
           </div>
-          <a href={`mailto:${listing.contactEmail}?subject=Application: ${listing.title}`}>
-            <Button>
-              <Mail size={16} />
-              Apply via Email
-            </Button>
-          </a>
-        </div>
+        )}
+
+        {/* Apply */}
+        {(() => {
+          const apply = listing.howToApply;
+          const isUrl = apply
+            ? (() => { try { new URL(apply); return true; } catch { return false; } })()
+            : false;
+          const href = apply
+            ? isUrl
+              ? apply
+              : `mailto:${apply}?subject=Application: ${listing.title}`
+            : `mailto:${listing.contactEmail}?subject=Application: ${listing.title}`;
+          const label = apply
+            ? isUrl ? "Apply Now" : "Apply via Email"
+            : "Apply via Email";
+
+          return (
+            <div className="mt-4 rounded-xl bg-jb-primary-light p-5 flex items-center justify-between gap-4 flex-wrap">
+              <div>
+                <p className="font-semibold text-jb-text">Interested in this role?</p>
+                <p className="text-sm text-jb-text-muted mt-0.5">
+                  {apply && isUrl
+                    ? "Submit your application through the link below."
+                    : <>Send your CV and cover letter to{" "}<span className="font-medium text-jb-primary">{apply ?? listing.contactEmail}</span></>
+                  }
+                </p>
+              </div>
+              <a href={href} target={isUrl ? "_blank" : undefined} rel={isUrl ? "noopener noreferrer" : undefined}>
+                <Button>
+                  <Mail size={16} />
+                  {label}
+                </Button>
+              </a>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

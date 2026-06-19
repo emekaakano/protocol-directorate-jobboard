@@ -14,6 +14,12 @@ function daysAgo(n: number): Date {
   return d;
 }
 
+function daysFromNow(n: number): Date {
+  const d = new Date();
+  d.setDate(d.getDate() + n);
+  return d;
+}
+
 async function main() {
   const existing = await prisma.admin.count();
   if (existing > 0) {
@@ -42,6 +48,8 @@ async function main() {
       salaryMin: 800_000,
       salaryMax: 1_200_000,
       contactEmail: "careers@flutterwave.com",
+      applicationDeadline: daysFromNow(18),
+      howToApply: "https://flutterwave.com/careers/apply",
       postDate: daysAgo(2),
     },
     {
@@ -56,6 +64,8 @@ async function main() {
       salaryMin: 900_000,
       salaryMax: 1_400_000,
       contactEmail: "talent@andela.com",
+      applicationDeadline: daysFromNow(14),
+      howToApply: "talent@andela.com",
       postDate: daysAgo(4),
     },
     {
@@ -70,6 +80,8 @@ async function main() {
       salaryMin: 600_000,
       salaryMax: 900_000,
       contactEmail: "design@paystack.com",
+      applicationDeadline: daysFromNow(10),
+      howToApply: "https://paystack.com/careers",
       postDate: daysAgo(6),
     },
     {
@@ -84,6 +96,8 @@ async function main() {
       salaryMin: 900_000,
       salaryMax: 1_400_000,
       contactEmail: "it.recruitment@mtn.com.ng",
+      applicationDeadline: daysFromNow(5),
+      howToApply: "it.recruitment@mtn.com.ng",
       postDate: daysAgo(7),
     },
     {
@@ -98,6 +112,8 @@ async function main() {
       salaryMin: 450_000,
       salaryMax: 700_000,
       contactEmail: "marketing.jobs@jumia.com",
+      applicationDeadline: daysFromNow(21),
+      howToApply: "https://jumia.com/careers",
       postDate: daysAgo(9),
     },
     {
@@ -112,6 +128,8 @@ async function main() {
       salaryMin: 700_000,
       salaryMax: 1_000_000,
       contactEmail: "hr@dangote.com",
+      applicationDeadline: daysFromNow(6),
+      howToApply: "hr@dangote.com",
       postDate: daysAgo(11),
     },
     {
@@ -126,6 +144,8 @@ async function main() {
       salaryMin: null,
       salaryMax: null,
       contactEmail: "analytics@accessbankplc.com",
+      applicationDeadline: daysFromNow(3),
+      howToApply: "https://accessbankplc.com/careers/apply",
       postDate: daysAgo(14),
     },
     {
@@ -140,6 +160,8 @@ async function main() {
       salaryMin: 250_000,
       salaryMax: 400_000,
       contactEmail: "dev.talent@interswitch.com",
+      applicationDeadline: daysFromNow(12),
+      howToApply: "dev.talent@interswitch.com",
       postDate: daysAgo(16),
     },
     {
@@ -154,6 +176,8 @@ async function main() {
       salaryMin: 180_000,
       salaryMax: 280_000,
       contactEmail: "editorial@techcabal.com",
+      applicationDeadline: daysFromNow(8),
+      howToApply: "https://techcabal.com/jobs",
       postDate: daysAgo(20),
     },
     {
@@ -168,6 +192,8 @@ async function main() {
       salaryMin: 400_000,
       salaryMax: 600_000,
       contactEmail: "biz@konga.com",
+      applicationDeadline: daysFromNow(4),
+      howToApply: "biz@konga.com",
       postDate: daysAgo(23),
     },
     {
@@ -182,6 +208,8 @@ async function main() {
       salaryMin: 120_000,
       salaryMax: 180_000,
       contactEmail: "graduate.recruitment@kpmg.com.ng",
+      applicationDeadline: daysFromNow(2),
+      howToApply: "https://kpmg.com/ng/careers",
       postDate: daysAgo(26),
     },
   ];

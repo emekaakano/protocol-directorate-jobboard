@@ -24,6 +24,8 @@ function parseFormData(formData: FormData) {
     salaryMin: salaryMinRaw === "" ? null : salaryMinRaw,
     salaryMax: salaryMaxRaw === "" ? null : salaryMaxRaw,
     contactEmail: formData.get("contactEmail") as string,
+    applicationDeadline: formData.get("applicationDeadline") as string,
+    howToApply: formData.get("howToApply") as string,
   };
 }
 
@@ -39,8 +41,13 @@ export async function createListing(
     return { errors: parsed.error.flatten().fieldErrors as Record<string, string[]> };
   }
 
+  const { applicationDeadline, ...rest } = parsed.data;
   const listing = await prisma.jobListing.create({
-    data: { ...parsed.data, adminId: session.user.id },
+    data: {
+      ...rest,
+      applicationDeadline: applicationDeadline ? new Date(applicationDeadline) : null,
+      adminId: session.user.id,
+    },
   });
 
   await prisma.auditLog.create({
@@ -68,9 +75,13 @@ export async function updateListing(
     return { errors: parsed.error.flatten().fieldErrors as Record<string, string[]> };
   }
 
+  const { applicationDeadline, ...rest } = parsed.data;
   const listing = await prisma.jobListing.update({
     where: { id, deletedAt: null },
-    data: parsed.data,
+    data: {
+      ...rest,
+      applicationDeadline: applicationDeadline ? new Date(applicationDeadline) : null,
+    },
   });
 
   await prisma.auditLog.create({

@@ -36,8 +36,10 @@ model JobListing {
   requirements String
   salaryMin    Int?
   salaryMax    Int?
-  contactEmail String
-  postDate     DateTime  @default(now())
+  contactEmail        String
+  howToApply          String?
+  applicationDeadline DateTime?
+  postDate            DateTime  @default(now())
   deletedAt    DateTime?
   adminId      String
   admin        Admin     @relation(fields: [adminId], references: [id])

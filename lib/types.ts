@@ -16,6 +16,8 @@ export interface JobListing {
   salaryMin: number | null;
   salaryMax: number | null;
   contactEmail: string;
+  howToApply: string | null;
+  applicationDeadline: Date | null;
   postDate: Date;
   deletedAt: Date | null;
   adminId: string;

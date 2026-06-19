@@ -32,6 +32,10 @@ export default async function EditJobPage({ params }: Props) {
         salaryMin: listing.salaryMin,
         salaryMax: listing.salaryMax,
         contactEmail: listing.contactEmail,
+        applicationDeadline: listing.applicationDeadline
+          ? listing.applicationDeadline.toISOString().split("T")[0]
+          : "",
+        howToApply: listing.howToApply ?? "",
       }}
     />
   );

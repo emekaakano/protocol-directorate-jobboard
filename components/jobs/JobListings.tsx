@@ -6,6 +6,7 @@ import { JobCard, type ListingCardData } from "./JobCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Briefcase } from "lucide-react";
 import { JOB_TYPE_LABELS } from "@/lib/constants";
+import { daysUntilExpiry } from "@/lib/utils";
 import type { JobType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +15,8 @@ const ALL_TYPES = [
   ...Object.entries(JOB_TYPE_LABELS).map(([value, label]) => ({ value, label })),
 ];
 
+type QuickFilter = "recent" | "expiring" | "";
+
 interface JobListingsProps {
   listings: ListingCardData[];
 }
@@ -21,9 +24,11 @@ interface JobListingsProps {
 export function JobListings({ listings }: JobListingsProps) {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<JobType | "">("");
+  const [quickFilter, setQuickFilter] = useState<QuickFilter>("");
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
+    const now = Date.now();
     return listings.filter((l) => {
       const matchesSearch =
         !q ||
@@ -31,9 +36,14 @@ export function JobListings({ listings }: JobListingsProps) {
         l.company.toLowerCase().includes(q) ||
         l.location.toLowerCase().includes(q);
       const matchesType = !typeFilter || l.type === typeFilter;
-      return matchesSearch && matchesType;
+      const daysSincePosted = Math.floor((now - new Date(l.postDate).getTime()) / 86400000);
+      const matchesQuick =
+        quickFilter === "recent" ? daysSincePosted <= 7 :
+        quickFilter === "expiring" ? daysUntilExpiry(l.postDate) <= 7 :
+        true;
+      return matchesSearch && matchesType && matchesQuick;
     });
-  }, [listings, search, typeFilter]);
+  }, [listings, search, typeFilter, quickFilter]);
 
   return (
     <div>
@@ -74,6 +84,29 @@ export function JobListings({ listings }: JobListingsProps) {
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* Quick filters */}
+        <div className="flex flex-wrap gap-2 mb-3">
+          {(["recent", "expiring"] as const).map((key) => {
+            const label = key === "recent" ? "Recent Jobs" : "About to Expire";
+            return (
+              <button
+                key={key}
+                onClick={() => setQuickFilter(quickFilter === key ? "" : key)}
+                className={cn(
+                  "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+                  quickFilter === key
+                    ? key === "expiring"
+                      ? "bg-jb-danger text-white"
+                      : "bg-jb-success text-white"
+                    : "bg-white border border-jb-border text-jb-text-muted hover:border-jb-primary hover:text-jb-primary"
+                )}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+
         {/* Type filter pills */}
         <div className="flex flex-wrap gap-2 mb-7">
           {ALL_TYPES.map((t) => (
@@ -93,7 +126,7 @@ export function JobListings({ listings }: JobListingsProps) {
         </div>
 
         {/* Results count */}
-        {(search || typeFilter) && (
+        {(search || typeFilter || quickFilter) && (
           <p className="mb-4 text-sm text-jb-text-muted">
             {filtered.length} result{filtered.length !== 1 ? "s" : ""}
             {search && (
@@ -116,6 +149,7 @@ export function JobListings({ listings }: JobListingsProps) {
                 onClick={() => {
                   setSearch("");
                   setTypeFilter("");
+                  setQuickFilter("");
                 }}
                 className="text-sm font-medium text-jb-primary hover:underline"
               >

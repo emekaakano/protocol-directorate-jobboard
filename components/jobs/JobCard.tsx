@@ -14,6 +14,7 @@ export interface ListingCardData {
   salaryMin: number | null;
   salaryMax: number | null;
   postDate: string;
+  applicationDeadline: string | null;
 }
 
 function companyInitials(name: string): string {
@@ -89,14 +90,21 @@ export function JobCard({ listing }: { listing: ListingCardData }) {
           )}
         </div>
 
-        <span
-          className={`flex items-center gap-1 ${
-            expiringSoon ? "text-jb-danger font-medium" : ""
-          }`}
-        >
-          <Clock size={12} className="shrink-0" />
-          {expiringSoon ? `${days}d left` : `${days} days left`}
-        </span>
+        {listing.applicationDeadline ? (
+          <span className={`flex items-center gap-1 ${
+            new Date(listing.applicationDeadline) <= new Date(Date.now() + 7 * 86400000)
+              ? "text-jb-danger font-medium"
+              : ""
+          }`}>
+            <Clock size={12} className="shrink-0" />
+            Closes {new Date(listing.applicationDeadline).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+          </span>
+        ) : (
+          <span className={`flex items-center gap-1 ${expiringSoon ? "text-jb-danger font-medium" : ""}`}>
+            <Clock size={12} className="shrink-0" />
+            {expiringSoon ? `${days}d left` : `${days} days left`}
+          </span>
+        )}
       </div>
     </Link>
   );

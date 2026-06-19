@@ -20,6 +20,8 @@ interface DefaultValues {
   salaryMin?: number | null;
   salaryMax?: number | null;
   contactEmail?: string;
+  applicationDeadline?: string;
+  howToApply?: string;
 }
 
 interface JobFormProps {
@@ -155,6 +157,45 @@ export function JobForm({
             placeholder="careers@company.com"
             required
           />
+
+          {/* Application deadline date picker */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-jb-text">
+              Application Deadline <span className="text-jb-danger">*</span>
+            </label>
+            <input
+              type="date"
+              name="applicationDeadline"
+              defaultValue={defaultValues.applicationDeadline ?? ""}
+              min={new Date().toISOString().split("T")[0]}
+              required
+              className="h-10 w-full rounded-xl border border-jb-border bg-white px-3 text-sm text-jb-text focus:outline-none focus:ring-2 focus:ring-jb-primary transition-colors"
+            />
+            {state?.errors?.applicationDeadline?.[0] && (
+              <p className="text-xs text-jb-danger">{state.errors.applicationDeadline[0]}</p>
+            )}
+          </div>
+
+          {/* How to apply — URL or email only */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-jb-text">
+              How to Apply <span className="text-jb-danger">*</span>
+            </label>
+            <input
+              type="text"
+              name="howToApply"
+              defaultValue={defaultValues.howToApply ?? ""}
+              placeholder="https://apply.company.com/job/123  or  careers@company.com"
+              required
+              className="h-10 w-full rounded-xl border border-jb-border bg-white px-3 text-sm text-jb-text placeholder:text-jb-text-muted focus:outline-none focus:ring-2 focus:ring-jb-primary transition-colors"
+            />
+            <p className="text-xs text-jb-text-muted">
+              Enter a direct application URL or an email address — nothing else is accepted.
+            </p>
+            {state?.errors?.howToApply?.[0] && (
+              <p className="text-xs text-jb-danger">{state.errors.howToApply[0]}</p>
+            )}
+          </div>
 
           <div className="flex items-center gap-3 border-t border-jb-border pt-6">
             <SubmitButton label={submitLabel} />
