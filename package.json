@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts",
+    "manage-admin": "tsx scripts/manage-admin.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.17.4",

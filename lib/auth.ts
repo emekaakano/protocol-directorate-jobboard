@@ -19,7 +19,7 @@ export const authOptions: NextAuthOptions = {
         const admin = await prisma.admin.findUnique({
           where: { email: parsed.data.email },
         });
-        if (!admin) return null;
+        if (!admin || !admin.isActive) return null;
 
         const valid = await bcrypt.compare(
           parsed.data.password,
