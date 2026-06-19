@@ -99,7 +99,7 @@ export function JobListings({ listings }: JobListingsProps) {
             {search && (
               <>
                 {" "}
-                for <span className="font-medium text-jb-text">"{search}"</span>
+                for <span className="font-medium text-jb-text">&ldquo;{search}&rdquo;</span>
               </>
             )}
           </p>
