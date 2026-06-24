@@ -6,7 +6,7 @@ import { JobCard, type ListingCardData } from "./JobCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Briefcase } from "lucide-react";
 import { JOB_TYPE_LABELS } from "@/lib/constants";
-import { daysUntilExpiry } from "@/lib/utils";
+import { daysUntilExpiry, daysUntilDate } from "@/lib/utils";
 import type { JobType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -44,10 +44,13 @@ export function JobListings({ listings }: JobListingsProps) {
         l.company.toLowerCase().includes(q) ||
         l.location.toLowerCase().includes(q);
       const daysSincePosted = Math.floor((now - new Date(l.postDate).getTime()) / 86400000);
+      const daysLeft = l.applicationDeadline
+        ? daysUntilDate(l.applicationDeadline)
+        : daysUntilExpiry(l.postDate);
       const matchesFilter =
         !activeFilter ? true :
         activeFilter === "recent" ? daysSincePosted <= 7 :
-        activeFilter === "expiring" ? daysUntilExpiry(l.postDate) <= 7 :
+        activeFilter === "expiring" ? daysLeft <= 7 :
         l.type === activeFilter;
       return matchesSearch && matchesFilter;
     });
@@ -71,7 +74,7 @@ export function JobListings({ listings }: JobListingsProps) {
           <h1 className="text-4xl font-black text-jb-text">Find Your Next Role</h1>
           <p className="mt-2 text-jb-text-muted">
             {listings.length} active listing{listings.length !== 1 ? "s" : ""} ·
-            auto-archived after 30 days
+            countdown based on application deadline
           </p>
 
           {/* Search */}

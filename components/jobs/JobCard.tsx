@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MapPin, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
-import { formatSalary, daysUntilExpiry } from "@/lib/utils";
+import { formatSalary, daysUntilExpiry, daysUntilDate } from "@/lib/utils";
 import type { JobType } from "@/lib/types";
 
 export interface ListingCardData {
@@ -45,8 +45,10 @@ function companyColor(name: string): string {
 }
 
 export function JobCard({ listing }: { listing: ListingCardData }) {
-  const days = daysUntilExpiry(listing.postDate);
-  const expiringSoon = days <= 5;
+  const days = listing.applicationDeadline
+    ? daysUntilDate(listing.applicationDeadline)
+    : daysUntilExpiry(listing.postDate);
+  const expiringSoon = days <= 7;
 
   return (
     <Link
@@ -90,21 +92,10 @@ export function JobCard({ listing }: { listing: ListingCardData }) {
           )}
         </div>
 
-        {listing.applicationDeadline ? (
-          <span className={`flex items-center gap-1 ${
-            new Date(listing.applicationDeadline) <= new Date(Date.now() + 7 * 86400000)
-              ? "text-jb-danger font-medium"
-              : ""
-          }`}>
-            <Clock size={12} className="shrink-0" />
-            Closes {new Date(listing.applicationDeadline).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
-          </span>
-        ) : (
-          <span className={`flex items-center gap-1 ${expiringSoon ? "text-jb-danger font-medium" : ""}`}>
-            <Clock size={12} className="shrink-0" />
-            {expiringSoon ? `${days}d left` : `${days} days left`}
-          </span>
-        )}
+        <span className={`flex items-center gap-1 ${expiringSoon ? "text-jb-danger font-medium" : ""}`}>
+          <Clock size={12} className="shrink-0" />
+          {days === 0 ? "Closing today" : expiringSoon ? `${days}d left` : `${days} days left`}
+        </span>
       </div>
     </Link>
   );
