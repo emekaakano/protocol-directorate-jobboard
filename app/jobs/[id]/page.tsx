@@ -11,7 +11,7 @@ import {
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { formatSalary, formatDate, daysUntilExpiry, isExpired } from "@/lib/utils";
+import { formatSalary, formatDate, daysUntilExpiry, daysUntilDate, isExpired } from "@/lib/utils";
 import type { JobType } from "@/lib/types";
 
 interface Props {
@@ -25,8 +25,10 @@ export default async function JobDetailPage({ params }: Props) {
 
   if (!listing || isExpired(listing.postDate)) notFound();
 
-  const days = daysUntilExpiry(listing.postDate);
-  const expiringSoon = days <= 5;
+  const days = listing.applicationDeadline
+    ? daysUntilDate(listing.applicationDeadline)
+    : daysUntilExpiry(listing.postDate);
+  const expiringSoon = days <= 7;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
@@ -83,7 +85,7 @@ export default async function JobDetailPage({ params }: Props) {
           <h2 className="mb-3 text-base font-bold text-jb-text">
             About this role
           </h2>
-          <p className="text-sm leading-relaxed text-jb-text-muted whitespace-pre-line">
+          <p className="text-sm leading-relaxed text-jb-text-muted whitespace-pre-line break-words">
             {listing.description}
           </p>
         </div>
@@ -93,7 +95,7 @@ export default async function JobDetailPage({ params }: Props) {
           <h2 className="mb-3 text-base font-bold text-jb-text">
             Requirements
           </h2>
-          <p className="text-sm leading-relaxed text-jb-text-muted whitespace-pre-line">
+          <p className="text-sm leading-relaxed text-jb-text-muted whitespace-pre-line break-words">
             {listing.requirements}
           </p>
         </div>
