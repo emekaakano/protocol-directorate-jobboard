@@ -134,8 +134,15 @@ export function ExportReport() {
       doc.text("Protocol Directorate JobBoard  ·  Confidential", margin, footerY + 6);
       doc.text("Page 1 of 1", colRight, footerY + 6, { align: "right" });
 
-      doc.save(`pdjb-report-${from}-to-${to}.pdf`);
-    } catch {
+      const blob = doc.output("blob");
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `pdjb-report-${from}-to-${to}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("PDF generation error:", err);
       setError("Failed to generate PDF. Please try again.");
     } finally {
       setLoadingPdf(false);
